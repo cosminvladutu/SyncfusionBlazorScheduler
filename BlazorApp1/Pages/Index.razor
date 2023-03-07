@@ -46,15 +46,21 @@ Welcome to your new app.
             <table class="custom-event-editor" width="100%" cellpadding="5">
                 <tbody>
                     <tr>
-                        <td class="e-textlabel">Summary</td>
+                        <td class="e-textlabel">Category Name</td>
                         <td colspan="4">
-                            <SfTextBox @bind-Value="@((context as AppointmentData).Subject)"></SfTextBox>
+                            <SfTextBox @bind-Value="@((context as AppointmentData).CategoryName)" Readonly="true"></SfTextBox>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="e-textlabel">Speciality Name</td>
+                        <td colspan="4">
+                            <SfTextBox @bind-Value="@((context as AppointmentData).SpecialityName)" Readonly="true"></SfTextBox>
                         </td>
                     </tr>
                     <tr>
                         <td class="e-textlabel">Status</td>
                         <td colspan="4">
-                            <SfDropDownList ID="EventType" DataSource="@StatusData" Placeholder="Choose status" @bind-Value="@((context as AppointmentData).EventType)">
+                            <SfDropDownList ID="State" DataSource="@appointmentStatuses" Placeholder="Choose status" @bind-Value="@((context as AppointmentData).State)">
                                 <DropDownListFieldSettings Value="Id"></DropDownListFieldSettings>
                             </SfDropDownList>
                         </td>
@@ -93,29 +99,24 @@ Welcome to your new app.
 
 @code {
     DateTime CurrentDate = new DateTime(2020, 1, 31);
-    public class DDFields
-    {
-        public string Id { get; set; }
-        public string Text { get; set; }
-    }
-    List<DDFields> StatusData = new List<DDFields>() {
-        new DDFields(){ Id= "New", Text= "New" },
-        new DDFields(){ Id= "Payed", Text= "Payed" },
-        new DDFields(){ Id= "Confirmed", Text= "Confirmed" },
-    };
+    IEnumerable<string> appointmentStatuses = Enum.GetNames(typeof(AppointmentStatus)).ToList();
 
     List<AppointmentData> DataSource = new List<AppointmentData>
     {
-    new AppointmentData { Id = 1, Subject = "Meeting", StartTime = new DateTime(2020, 1, 31, 9, 30, 0) , EndTime = new DateTime(2020, 1, 31, 11, 0, 0), EventType = "Payed" }
+    new AppointmentData { Id = Guid.Parse("dfcd6d39-032a-406d-8eef-82a259dd8b44"),
+    CategoryName = "TestCategoryName", StartTime = new DateTime(2020, 1, 31, 9, 30, 0) , EndTime = new DateTime(2020, 1, 31, 11, 0, 0),  State = AppointmentStatus.Pending,
+    SpecialityName = "TestSpecialityName", Subject = "This is my appointment"}
     };
     public class AppointmentData
     {
-        public int Id { get; set; }
-        public string Subject { get; set; }
+        public Guid Id { get; set; }
+        public string CategoryName { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string Description { get; set; }
-        public string EventType { get; set; }
+        public AppointmentStatus State { get; set; }
+        public string SpecialityName { get; set; }
+        public string Subject { get; set; }
     }
 
     List<AppointmentVm> DataSourceVm = new List<AppointmentVm>
@@ -146,6 +147,7 @@ Welcome to your new app.
     public class AppointmentVm
     {
         public Guid Id { get; set; }
+
         public DateTimeOffset Date { get; set; }
         public string SpecialityName { get; set; }
         public string CategoryName { get; set; }
