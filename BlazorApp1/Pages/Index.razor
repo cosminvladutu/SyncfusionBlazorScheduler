@@ -1,0 +1,203 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+@*<SfSchedule TValue=AppointmentData>
+    <ScheduleViews>
+        <ScheduleView Option="View.Day"></ScheduleView>
+        <ScheduleView Option="View.Week"></ScheduleView>
+        <ScheduleView Option="View.WorkWeek"></ScheduleView>
+        <ScheduleView Option="View.Month"></ScheduleView>
+        <ScheduleView Option="View.Agenda"></ScheduleView>
+    </ScheduleViews>
+</SfSchedule>
+@code {
+    public class AppointmentData
+    {
+        public int Id { get; set; }
+        public string Subject { get; set; }
+        public string Location { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public string Description { get; set; }
+        public bool IsAllDay { get; set; }
+        public string RecurrenceRule { get; set; }
+        public string RecurrenceException { get; set; }
+        public Nullable<int> RecurrenceID { get; set; }
+    }
+}*@
+
+@*<SfSchedule TValue="AppointmentData" Height="650px" @bind-SelectedDate="@CurrentDate" Readonly="true">*@
+@using Syncfusion.Blazor.Schedule
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Inputs
+@using static BlazorApp1.Pages.Index.AppointmentVm;
+
+<SfSchedule TValue="AppointmentData" Width="100%" Height="650px" @bind-SelectedDate="@CurrentDate">
+    <ScheduleTemplates>
+        <EditorTemplate>
+            <table class="custom-event-editor" width="100%" cellpadding="5">
+                <tbody>
+                    <tr>
+                        <td class="e-textlabel">Summary</td>
+                        <td colspan="4">
+                            <SfTextBox @bind-Value="@((context as AppointmentData).Subject)"></SfTextBox>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="e-textlabel">Status</td>
+                        <td colspan="4">
+                            <SfDropDownList ID="EventType" DataSource="@StatusData" Placeholder="Choose status" @bind-Value="@((context as AppointmentData).EventType)">
+                                <DropDownListFieldSettings Value="Id"></DropDownListFieldSettings>
+                            </SfDropDownList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="e-textlabel">From</td>
+                        <td colspan="4">
+                            <SfDateTimePicker @bind-Value="@((context as AppointmentData).StartTime)"></SfDateTimePicker>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="e-textlabel">To</td>
+                        <td colspan="4">
+                            <SfDateTimePicker @bind-Value="@((context as AppointmentData).EndTime)"></SfDateTimePicker>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="e-textlabel">Reason</td>
+                        <td colspan="4">
+                            <SfTextBox Multiline="true" @bind-Value="@((context as AppointmentData).Description)"></SfTextBox>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </EditorTemplate>
+    </ScheduleTemplates>
+    <ScheduleEventSettings DataSource="@DataSource"></ScheduleEventSettings>
+    <ScheduleViews>
+        <ScheduleView Option="View.Day"></ScheduleView>
+        <ScheduleView Option="View.Week"></ScheduleView>
+        <ScheduleView Option="View.WorkWeek"></ScheduleView>
+        <ScheduleView Option="View.Month"></ScheduleView>
+        <ScheduleView Option="View.Agenda"></ScheduleView>
+    </ScheduleViews>
+</SfSchedule>
+
+@code {
+    DateTime CurrentDate = new DateTime(2020, 1, 31);
+    public class DDFields
+    {
+        public string Id { get; set; }
+        public string Text { get; set; }
+    }
+    List<DDFields> StatusData = new List<DDFields>() {
+        new DDFields(){ Id= "New", Text= "New" },
+        new DDFields(){ Id= "Payed", Text= "Payed" },
+        new DDFields(){ Id= "Confirmed", Text= "Confirmed" },
+    };
+
+    List<AppointmentData> DataSource = new List<AppointmentData>
+    {
+    new AppointmentData { Id = 1, Subject = "Meeting", StartTime = new DateTime(2020, 1, 31, 9, 30, 0) , EndTime = new DateTime(2020, 1, 31, 11, 0, 0), EventType = "Payed" }
+    };
+    public class AppointmentData
+    {
+        public int Id { get; set; }
+        public string Subject { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public string Description { get; set; }
+        public string EventType { get; set; }
+    }
+
+    List<AppointmentVm> DataSourceVm = new List<AppointmentVm>
+    {
+      new AppointmentVm
+        {
+            Date = new DateTimeOffset(2023, 10, 11, 12, 13, 14, TimeSpan.Zero),
+            SpecialityName = "TestSpecialityName",
+            CategoryName = "TestCategoryName",
+            EstimatedDuration = new TimeOnly(0, 30, 0),
+            Professional = new AppointmentVm.ProfessionalInformation
+            {
+                FirstName= "testFirstName",
+                LastName= "testLastName",
+                Picture = "nicePic",
+            },
+            Customer = new AppointmentVm.PersonalInformation
+            {
+                FirstName = "cFirst",
+                LastName = "cLast"
+            },
+            State = AppointmentStatus.Pending,
+            Id = Guid.Parse("dfcd6d39-032a-406d-8eef-82a259dd8b44"),
+            Description = "some description"
+        }
+    };
+
+    public class AppointmentVm
+    {
+        public Guid Id { get; set; }
+        public DateTimeOffset Date { get; set; }
+        public string SpecialityName { get; set; }
+        public string CategoryName { get; set; }
+        public ProfessionalInformation Professional { get; set; }
+        public AppointmentStatus State { get; set; }
+        public string? Description { get; set; }
+        public List<FileInformationVm>? Files { get; set; }
+        public TimeOnly? EstimatedDuration { get; set; }
+        public TimeOnly? RealDuration { get; set; }
+        public List<AppointmentResultVm>? AppointmentResults { get; set; }
+        public PersonalInformation Customer { get; set; }
+        public Guid? PreviousAppointment { get; set; }
+        public string? Feedback { get; set; }
+
+
+        public class ProfessionalInformation : PersonalInformation
+        {
+            public string Picture { get; set; }
+        }
+
+        public class PersonalInformation
+        {
+            public Guid Id { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+        }
+
+        public class AppointmentResultVm
+        {
+            public string? ProfessionalOpinion { get; set; }
+            public List<FileInformationVm>? Files { get; set; }
+        }
+
+        public record FileInformationVm
+        {
+            public Guid Id { get; set; }
+            public string Name { get; set; }
+            public string Path { get; set; }
+        }
+
+        public enum AppointmentStatus
+        {
+            Pending = 1,
+            PendingPayment = 2,
+            RejectedDueToPayment = 10,
+            Payed = 20,
+            Canceled = 30,
+            Accepted = 40,
+            Rescheduled = 90,
+            Started = 100,
+            Ended = 110,
+            Completed = 200,
+        }
+    }
+}
